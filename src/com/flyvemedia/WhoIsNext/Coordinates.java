@@ -7,21 +7,28 @@ public class Coordinates implements Comparable<Coordinates>{
 	private int dx;
 	private int dy;
 	private int hyp;
+	private int ID;
 	
-	public Coordinates(int x, int y){
+	public Coordinates(int x, int y, int ID){
 		this.x = x;
 		this.y = y;
 		dx = 0;
 		dy = 0;
 		hyp = -1;
+		this.ID = ID;
 	}
 
-	public Coordinates(){
+	public Coordinates(int ID){
 		this.x = -1;
 		this.y = -1;
 		dx = 0;
 		dy = 0;
 		hyp = -1;
+		this.ID = ID;
+	}
+	
+	public int getID(){
+		return ID;
 	}
 	
 	public boolean setX(int x){
