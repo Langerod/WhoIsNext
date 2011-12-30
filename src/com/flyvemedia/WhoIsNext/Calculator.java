@@ -12,19 +12,8 @@ public class Calculator{
 		IDCounter = 0;
 	}
 	
-	public boolean hasMoved(int x, int y){
-		Coordinates c = getClosest(x, y);
-		
-		if(c == null)
-			return false;
-		
-		c.setX(x);
-		c.setY(y);
-		
-		return true;
-	}
-	
 	private Coordinates getClosest(int x, int y){
+		System.out.println("Coordinates: is empty? "+ points.isEmpty());
 		if(points.isEmpty())
 			return null;
 		
@@ -35,6 +24,9 @@ public class Calculator{
 	}
 	
 	public boolean hasCome(int x, int y){
+		
+		System.out.println("Coordinates: has come x:"+x+" y"+ y);
+		
 		if(x < 0 || y < 0)
 			return false;
 		

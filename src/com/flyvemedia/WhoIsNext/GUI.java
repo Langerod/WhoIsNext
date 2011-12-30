@@ -6,6 +6,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.view.Display;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -18,10 +21,16 @@ public class GUI extends SurfaceView {
 	private int[][] points;
 	private int ex;
 	private int ey;
+	private boolean isActive;
 	private boolean countDown;
 	private String countDownTime;
 	private int horizontal;
 	private int vertical;
+	
+	private int height;
+	private int width;
+	
+	private Paint cdText;
 		
 	public GUI(WhoIsNextActivity activity, Calculator calc) {
 		super(activity);
@@ -30,6 +39,19 @@ public class GUI extends SurfaceView {
 		ex = -1;
 		ey = -1;
 		
+		
+		
+		Display display = activity.getWindowManager().getDefaultDisplay(); 
+		width = display.getWidth();
+		height = display.getHeight();
+		
+		System.out.println(width+" "+height);
+
+		cdText =  new Paint();
+		cdText.setColor(Color.WHITE);
+		cdText.setTextSize(width / 20);
+		
+		
 		//horizontal = activity.
 				
 		gameLoop = new GameLoop(this, calc);
@@ -37,7 +59,9 @@ public class GUI extends SurfaceView {
 		holder.addCallback(new Callback() {
 			
 			@Override
-			public void surfaceDestroyed(SurfaceHolder holder) {}
+			public void surfaceDestroyed(SurfaceHolder holder) {
+				gameLoop.setRunning(false);
+			}
 			
 			@Override
 			public void surfaceCreated(SurfaceHolder holder) {
@@ -53,6 +77,8 @@ public class GUI extends SurfaceView {
 			
 			
 		});
+		System.out.println("GUI: constructor");
+		invalidate();
 	}
 	
 	public void putPoints(int[][] points){
@@ -66,14 +92,27 @@ public class GUI extends SurfaceView {
 	public void setCountDownTime(String countDownTime){
 		this.countDownTime = countDownTime;
 	}
+	
+	public void setActive(boolean active){
+		this.isActive = active;
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if(event.getAction() != MotionEvent.ACTION_MOVE){
+			gameLoop.addMotionEvent(MotionEvent.obtainNoHistory(event));
+		}
+		return true;
+	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+				
 		canvas.drawColor(Color.GRAY);
-		
+		canvas.drawText("Test", width / 2 - width / 8, height / 2 - height / 20, cdText);
 		
 		if(countDown){
-			//canvas.drawText(countDownTime, x, y, paint)
+			canvas.drawText(countDownTime, 100f, 400f, cdText);
 		}
 		
 		
