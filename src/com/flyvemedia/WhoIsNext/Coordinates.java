@@ -2,14 +2,14 @@ package com.flyvemedia.WhoIsNext;
 
 public class Coordinates implements Comparable<Coordinates>{
 	
-	private int x;
-	private int y;
-	private int dx;
-	private int dy;
-	private int hyp;
+	private float x;
+	private float y;
+	public static float dx;
+	public static float dy;
+	private float hyp;
 	private int ID;
 	
-	public Coordinates(int x, int y, int ID){
+	public Coordinates(float x, float y, int ID){
 		this.x = x;
 		this.y = y;
 		dx = 0;
@@ -40,7 +40,7 @@ public class Coordinates implements Comparable<Coordinates>{
 		return true;
 	}
 	
-	public int getX(){
+	public float getX(){
 		return x;
 	}
 	
@@ -53,33 +53,28 @@ public class Coordinates implements Comparable<Coordinates>{
 		return true;
 	}
 	
-	public int getY(){
+	public float getY(){
 		return y;
 	}
 	
-	public boolean setMotion(int x, int y){
-		if(x <= 0 || y <= 0)
-			return false;
-		if(x != dx || y != dy)
-			hyp = -1;
-		
-		this.dx = x;
-		this.dy = y;
-		
-		return true;
-	}
-	
-	public int compareTo(Coordinates c){
+	public float getHyp(){
 		if(hyp == -1){
-			int kant1 = (c.getX() > x) ? (c.getX() - x) : (x - c.getX());
+			float kant1 = (dx > x) ? (dx - x) : (x - dx);
 			kant1 = kant1 * kant1;
 
-			int kant2 = (c.getY() > y) ? (c.getY() - y) : (y - c.getY());
+			float kant2 = (dy > y) ? (dy - y) : (y - dy);
 			kant2 = kant2 * kant2;
 
-			hyp = (int)Math.sqrt((kant1 + kant2));
+			hyp = (float)Math.sqrt((kant1 + kant2));
 		}
+		
+		
 		return hyp;
+	}
+	
+	
+	public int compareTo(Coordinates c){
+		return (int)(getHyp() - c.getHyp());
 	}
 
 }

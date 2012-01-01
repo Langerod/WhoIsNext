@@ -12,19 +12,20 @@ public class Calculator{
 		IDCounter = 0;
 	}
 	
-	private Coordinates getClosest(int x, int y){
-		System.out.println("Coordinates: is empty? "+ points.isEmpty());
+	private Coordinates getClosest(float x, float y){
 		if(points.isEmpty())
 			return null;
 		
-		for(Coordinates c : points)
-			c.setMotion(x, y);
+		Coordinates.dx = x;
+		Coordinates.dy = y;
+		
+		//B¿r lage en egen klasse som er spesialisert til Œ hente ut n¾rmeste koordinater,
+		//ved ett kall (get(float x, floaty y))
 		
 		return points.first();
 	}
 	
-	public boolean hasCome(int x, int y){
-		
+	public boolean hasCome(float x, float y){
 		System.out.println("Coordinates: has come x:"+x+" y"+ y);
 		
 		if(x < 0 || y < 0)
@@ -33,17 +34,19 @@ public class Calculator{
 		return points.add(new Coordinates(x, y, IDCounter++));
 	}
 	
-	public boolean hasGone(int x, int y){
+	public boolean hasGone(float x, float y){
+		System.out.println("Coordinates: has gone x:"+x+" y"+ y);
+		
 		Coordinates c = getClosest(x, y);
 		return points.remove(c);
 	}
 	
-	public int[][] getCoordinates(){
-		int[][] coordinates = new int[points.size()][2];
-		Coordinates[] cObjects = new Coordinates[points.size()];
-		cObjects = points.toArray(cObjects);
+	public float[][] getCoordinates(){
+		float[][] coordinates = new float[points.size()][2];
+		//Coordinates[] cObjects = new Coordinates[points.size()];
+		//cObjects = points.toArray(cObjects);
 		
-		for(int i = 0; i < cObjects.length; i++){
+		/*for(int i = 0; i < cObjects.length; i++){
 			Coordinates c = null;
 			
 			for(int j = 0; j < cObjects.length; j++){
@@ -60,7 +63,13 @@ public class Calculator{
 				coordinates[i][0] = c.getX();
 				coordinates[i][1] = c.getY();
 			}
+		}*/
+		int i = 0;
+		for(Coordinates c : points){
+			coordinates[i][0] = c.getX();
+			coordinates[i++][1] = c.getY();
 		}
+		
 		return coordinates;
 	}
 		

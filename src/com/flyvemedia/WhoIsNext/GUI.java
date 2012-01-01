@@ -18,42 +18,47 @@ public class GUI extends SurfaceView {
 	private SurfaceHolder holder;
 	private GameLoop gameLoop;
 	
-	private int[][] points;
-	private int ex;
-	private int ey;
+	private float[][] points;
+	private float ex;
+	private float ey;
+	private boolean winner;
 	private boolean isActive;
 	private boolean countDown;
 	private String countDownTime;
-	private int horizontal;
-	private int vertical;
 	
 	private int height;
 	private int width;
 	
 	private Paint cdText;
+	private Paint lines;
+	private Paint ball;
 		
 	public GUI(WhoIsNextActivity activity, Calculator calc) {
 		super(activity);
 				
 		points = null;
-		ex = -1;
-		ey = -1;
-		
-		
+		ex = 50;
+		ey = 20;
 		
 		Display display = activity.getWindowManager().getDefaultDisplay(); 
 		width = display.getWidth();
 		height = display.getHeight();
 		
+		winner = false;
+		
 		System.out.println(width+" "+height);
 
 		cdText =  new Paint();
 		cdText.setColor(Color.WHITE);
-		cdText.setTextSize(width / 20);
+		cdText.setTextSize(width / 8);
 		
+		lines = new Paint();
+		lines.setColor(Color.BLACK);
+		lines.setStrokeWidth(2);
 		
-		//horizontal = activity.
-				
+		ball = new Paint();
+		ball.setColor(Color.YELLOW);		
+						
 		gameLoop = new GameLoop(this, calc);
 		holder = getHolder();
 		holder.addCallback(new Callback() {
@@ -70,7 +75,7 @@ public class GUI extends SurfaceView {
 			}
 			
 			@Override
-			public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			public void surfaceChanged(SurfaceHolder  holder, int format, int width,
 					int height) {
 				
 			}
@@ -81,8 +86,12 @@ public class GUI extends SurfaceView {
 		invalidate();
 	}
 	
-	public void putPoints(int[][] points){
+	public void putPoints(float[][] points){
 		this.points = points;
+	}
+	
+	public float[][] getPoints(){
+		return points;
 	}
 	
 	public void setCountDown(boolean countDown){
@@ -99,6 +108,10 @@ public class GUI extends SurfaceView {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		if(isActive && event.getAction() != MotionEvent.ACTION_UP){
+			return false;
+		}
+		
 		if(event.getAction() != MotionEvent.ACTION_MOVE){
 			gameLoop.addMotionEvent(MotionEvent.obtainNoHistory(event));
 		}
@@ -109,15 +122,42 @@ public class GUI extends SurfaceView {
 	protected void onDraw(Canvas canvas) {
 				
 		canvas.drawColor(Color.GRAY);
-		canvas.drawText("Test", width / 2 - width / 8, height / 2 - height / 20, cdText);
+		
+		//System.out.println("GUI(onDraw): active("+isActive+") countDown("+countDown);
 		
 		if(countDown){
-			canvas.drawText(countDownTime, 100f, 400f, cdText);
+			canvas.drawText(countDownTime, width / 2 - width / 8, height / 2, cdText);
+		}else if(isActive){
+			drawLines(canvas);
+			if(ex != -1 && ey != -1)
+				canvas.drawCircle(ex, ey, width / 30, ball);
 		}
-		
-		
-		
 		
 		super.onDraw(canvas);
 	}
+	
+	private void drawLines(Canvas canvas){
+		
+		for(int i = 0; i < points.length - 1; i++){
+			canvas.drawLine(points[i][0], points[i][1], points[i+1][0], points[i+1][1], lines);
+		}
+		
+		canvas.drawLine(points[0][0], points[0][1], points[points.length-1][0], points[points.length-1][1], lines);
+		
+		
+	}
+	
+	public void winner(float x, float y){
+		setXY(x, y);
+		winner = true;
+	}
+	
+	public void setXY(float x, float y){
+		ex = x;
+		ey = y;
+	}
 }
+
+
+
+
