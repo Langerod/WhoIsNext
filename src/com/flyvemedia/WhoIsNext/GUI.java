@@ -32,6 +32,7 @@ public class GUI extends SurfaceView {
 	private Paint cdText;
 	private Paint lines;
 	private Paint ball;
+	private Paint winnerBall;
 		
 	public GUI(WhoIsNextActivity activity, Calculator calc) {
 		super(activity);
@@ -58,6 +59,9 @@ public class GUI extends SurfaceView {
 		
 		ball = new Paint();
 		ball.setColor(Color.YELLOW);		
+
+		winnerBall = new Paint();
+		winnerBall.setColor(Color.RED);		
 						
 		gameLoop = new GameLoop(this, calc);
 		holder = getHolder();
@@ -129,8 +133,10 @@ public class GUI extends SurfaceView {
 			canvas.drawText(countDownTime, width / 2 - width / 8, height / 2, cdText);
 		}else if(isActive){
 			drawLines(canvas);
-			if(ex != -1 && ey != -1)
+			if(!winner)
 				canvas.drawCircle(ex, ey, width / 30, ball);
+			else
+				canvas.drawCircle(ex, ey, width / 20, winnerBall);
 		}
 		
 		super.onDraw(canvas);
@@ -155,6 +161,10 @@ public class GUI extends SurfaceView {
 	public void setXY(float x, float y){
 		ex = x;
 		ey = y;
+	}
+
+	public void gotWinner(boolean winner) {
+		this.winner = winner;		
 	}
 }
 

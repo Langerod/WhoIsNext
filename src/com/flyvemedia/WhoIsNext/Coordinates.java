@@ -74,7 +74,8 @@ public class Coordinates implements Comparable<Coordinates>{
 	
 	
 	public int compareTo(Coordinates c){
-		return (int)(getHyp() - c.getHyp());
+		return this.ID - c.ID;
+		//return (int)(getHyp() - c.getHyp());
 	}
 
 }

@@ -18,12 +18,15 @@ public class GameLoop extends Thread {
 	
 	private Energize energize;
 	
+	private int fingers;
+	
 	//testing
 
 	MotionEvent m1 = MotionEvent.obtain(SystemClock.uptimeMillis()+40, 14l, MotionEvent.ACTION_DOWN, 20f, 200f,0);
 	MotionEvent m2 = MotionEvent.obtain(SystemClock.uptimeMillis()+10000, 14l, MotionEvent.ACTION_DOWN, 100f, 20f,0);
-	//MotionEvent m3 = MotionEvent.obtain(SystemClock.uptimeMillis()+40, 14l, MotionEvent.ACTION_UP, 20f, 200f,0);
-	//MotionEvent m4 = MotionEvent.obtain(SystemClock.uptimeMillis()+100, 14l, MotionEvent.ACTION_UP, 100f, 20f,0);
+	private boolean winner;
+	MotionEvent m3 = MotionEvent.obtain(SystemClock.uptimeMillis()+40, 14l, MotionEvent.ACTION_UP, 20f, 200f,0);
+	MotionEvent m4 = MotionEvent.obtain(SystemClock.uptimeMillis()+100, 14l, MotionEvent.ACTION_UP, 100f, 20f,0);
 
 	//end testing
 
@@ -34,6 +37,7 @@ public class GameLoop extends Thread {
 		this.energize = new Energize(gui, this);
 		this.events = new LinkedBlockingQueue<MotionEvent>();
 		this.countDownThread = new CountDown(gui, this);
+		fingers = 0;
 	}
 
 	public void setRunning(boolean running){
@@ -107,53 +111,55 @@ public class GameLoop extends Thread {
 							}
 						}
 
-
+						fingers++;
 						calc.hasCome(m.getX(), m.getY());
 						break;
 
 					case MotionEvent.ACTION_UP:
 
+						if(m3 != null){
+							gui.onTouchEvent(m3);
+							m3 = null;
+						}
+
+						if(m4 != null){
+							gui.onTouchEvent(m4);
+							m4 = null;
+						}
+						
 						System.out.println("UP");
-						if(isActive || countDown){
-
-							/*if(m3 != null){
-								gui.onTouchEvent(m3);
-								m3 = null;
-							}
-
-							if(m4 != null){
-								gui.onTouchEvent(m4);
-								m4 = null;
-							}*/
+						if(fingers == 1){
 
 							isActive = false;
-							gui.setActive(false);
 							countDown = false;
+							winner = false;
+							gui.setActive(false);
 							gui.setCountDown(false);
+							gui.gotWinner(false);
 							countDownThread.setRunning(false);
 							countDownThread = null;
 							countDownThread = new CountDown(gui, this);
 						}
+						fingers--;
 						calc.hasGone(m.getX(), m.getY());								
 						break;
-
 					default:
 						break;
 					}
-
+					
 					gui.putPoints(calc.getCoordinates());
 
 					callDraw();
 				}
-			}else if(isActive){
+			}else if(isActive && !winner){
 				float[] xy = energize.getNextXY();
 				
-				if(xy != null)
+				if(xy != null){
 					gui.setXY(xy[0], xy[1]);
-				else
+					callDraw();
+				}else{
 					energize.resetPoints();
-				
-				callDraw();
+				}
 			}
 
 			sleepTime = pause - (System.currentTimeMillis() - startTime);
@@ -169,7 +175,10 @@ public class GameLoop extends Thread {
 	}
 	
 	public void winner(float x, float y){
+		System.out.println("winner "+x+" "+y);
 		gui.winner(x,y);
+		winner = true;
+		gui.gotWinner(true);
 		callDraw();
 	}
 

@@ -12,12 +12,12 @@ public class Energize{
 	private int currentStepRound;
 	
 	private int numStepIndex;
-	private int[] numSteps = {3, 8};
+	private int[] numSteps = {2, 3, 5, 7};
 	
 	private int currentRound;
 	
 	private int roundsIndex;
-	private int[] rounds = {3, 2};
+	private int[] rounds;
 	
 	private int pointsIndex;
 	private float[][] points;	
@@ -35,10 +35,17 @@ public class Energize{
 			points = gui.getPoints();
 			pointsIndex = (int)(Math.random() * points.length);
 			currentRound = 0;
-			currentStepRound = 0;
+			currentStepRound = (int)(Math.random() * points.length);
 			roundsIndex = 0;
 			numStepIndex = 0;
 			stepIndex = 0;
+			
+			rounds = new int[4];
+			rounds[0] = 4 + (int)(Math.random() * points.length);
+			rounds[1] = 3 + (int)(Math.random() * points.length);
+			rounds[2] = 2 + (int)(Math.random() * points.length);
+			rounds[3] = 1 + (int)(Math.random() * points.length);
+			
 		}
 
 		if(steps != null){
@@ -50,10 +57,10 @@ public class Energize{
 					if(++currentRound == rounds[roundsIndex]){
 						currentRound = 0;
 						if(++numStepIndex == numSteps.length || ++roundsIndex == rounds.length){
-							if(++pointsIndex != points.length){
-								gameLoop.winner(points[pointsIndex][0], points[pointsIndex][0]);
+							if(pointsIndex != points.length){
+								gameLoop.winner(points[pointsIndex][0], points[pointsIndex][1]);
 							}else{
-								gameLoop.winner(points[0][0], points[0][0]);
+								gameLoop.winner(points[0][0], points[0][1]);
 							}
 							return null;
 						}
@@ -95,15 +102,13 @@ public class Energize{
 
 	private float[][] calcSteps(float x, float y, float dx, float dy, int steps){
 		float[][] dots = new float[steps][2];
-		steps++;
-		float xLength = (dx > x) ? (dx - x) / steps : (x - dx) / steps;
-		float yLength = (dy > y) ? (dy - y) / steps : (y - dy) / steps;
-		float startX = (dx > x) ? x : dx;
-		float startY = (dy > y) ? y : dy;
+		
+		float xLength = (dx - x) / steps;
+		float yLength = (dy - y) / steps;
 
 		for(int i = 0; i < dots.length; i++){
-			dots[i][0] = startX + (i * xLength);
-			dots[i][1] = startY + (i * yLength);
+			dots[i][0] = x + (i * xLength);
+			dots[i][1] = y + (i * yLength);
 		}
 
 		return dots;
